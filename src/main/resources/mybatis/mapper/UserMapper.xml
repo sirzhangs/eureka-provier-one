@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sirzhangs.provider.mapper.UserMapper" >
+	
+	<sql id="base_cloumn">
+		id,`name`,age,telephone,address
+	</sql>
+	
+	<insert id="add" parameterType="com.sirzhangs.provider.entity.User">
+		INSERT INTO uc_user(id,`name`,age,telephone,address)
+		VALUES(#{id},#{name},#{age},#{telephone},#{address})
+	</insert>
+	
+	<delete id="delete" parameterType="java.util.List" >
+		DELETE FROM uc_user
+		WHERE id IN
+		<foreach collection="ids" item="id" separator="," open="(" close=")" >
+			#{id}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="com.sirzhangs.provider.entity.User">
+		update uc_user
+		<set>
+			<if test="name != null"> `name` = #{name}</if>
+			<if test="age != null"> age = #{age}</if>
+			<if test="address != null"> address = #{address}</if>
+			<if test="telephone != null">telephone = #{telephone}</if>
+		</set>
+	</update>
+	
+	<select id="findById" parameterType="java.lang.String" resultType="com.sirzhangs.provider.entity.User">
+		SELECT 
+		<include refid="base_cloumn"/>
+		FROM uc_user 
+		WHERE id = #{id}
+	</select>
+	
+	<select id="findList" parameterType="com.sirzhangs.provider.dto.UserDto" resultType="com.sirzhangs.provider.entity.User">
+		SELECT 
+		<include refid="base_cloumn"/>
+		FROM uc_user 
+	</select>
+
+</mapper>
