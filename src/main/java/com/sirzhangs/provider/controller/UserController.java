@@ -47,6 +47,14 @@ public class UserController {
 	public RequestResult findById(
 			@PathVariable(value = "id",required = true) String id
 			) {
+		if(id.length() > 2) {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return userService.findById(id);
 	}
 	
