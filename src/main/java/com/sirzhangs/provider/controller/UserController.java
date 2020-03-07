@@ -1,6 +1,9 @@
 package com.sirzhangs.provider.controller;
 
 import java.util.List;
+import java.util.UUID;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +46,11 @@ public class UserController {
 		return userService.update(user);
 	}
 	
+	/**
+	 * 测试熔断器
+	 * @param id
+	 * @return
+	 */
 	@GetMapping("findById/{id}")
 	public RequestResult findById(
 			@PathVariable(value = "id",required = true) String id
@@ -63,6 +71,23 @@ public class UserController {
 			@RequestBody UserDto userDto
 			) {
 		return userService.findList(userDto);
+	}
+	
+	/**
+	 * 测试分布式session
+	 * @param httpSession
+	 * @return
+	 */
+	@GetMapping("/getSession")
+	public RequestResult getSession(
+			HttpSession httpSession
+			) {
+		String uid = (String) httpSession.getAttribute("uid");
+		if(uid == null) {
+			uid = UUID.randomUUID().toString().replace("-", "");
+		}
+		httpSession.setAttribute("uid", uid);
+		return RequestResult.ok(httpSession.getId());
 	}
 	
 }
