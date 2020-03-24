@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sirzhangs.common.entity.RequestResult;
+import com.sirzhangs.provider.common.configure.MsgSendConfirmCallBack;
 import com.sirzhangs.provider.dto.UserDto;
 import com.sirzhangs.provider.entity.User;
 import com.sirzhangs.provider.service.UserService;
@@ -24,6 +26,12 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private RabbitTemplate customRabbitTemplate;
+	
+	@Autowired
+	private MsgSendConfirmCallBack msgSendConfirmCallBack;
 	
 	@PostMapping("add")
 	public RequestResult add(
@@ -88,6 +96,15 @@ public class UserController {
 		}
 		httpSession.setAttribute("uid", uid);
 		return RequestResult.ok(httpSession.getId());
+	}
+	
+	@GetMapping("/sendMessage/{message}")
+	public RequestResult sendMessage(
+			@PathVariable(value = "message",required = true) String message
+			) {
+		customRabbitTemplate.setConfirmCallback(msgSendConfirmCallBack);
+		customRabbitTemplate.convertAndSend("test_direct_exchange", "topic.message", message);
+		return RequestResult.ok("消息发送成功");
 	}
 	
 }
