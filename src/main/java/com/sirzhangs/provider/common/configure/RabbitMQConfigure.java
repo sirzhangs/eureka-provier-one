@@ -129,7 +129,7 @@ public class RabbitMQConfigure {
 		containerFactory.setMaxConcurrentConsumers(5);
 		containerFactory.setConcurrentConsumers(1);
 		containerFactory.setAcknowledgeMode(AcknowledgeMode.MANUAL); //设置确认模式手工确认
-//		containerFactory.setAcknowledgeMode(AcknowledgeMode.AUTO); //设置确认模式手工确认
+//		containerFactory.setAcknowledgeMode(AcknowledgeMode.AUTO); //设置确认模式自动确认
 		return containerFactory;
 	}
 
